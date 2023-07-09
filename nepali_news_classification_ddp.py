@@ -116,9 +116,9 @@ class Trainer():
         train_accuracies = torch.tensor([], device=self.rank)
         test_accuracies = torch.tensor([], device=self.rank)
         
-        self.model.train()
         for epoch in range(self.epochs):
             train_accuracy = []
+            print(f"Epoch: {epoch}")
             for data, target in tqdm(train_dl):
                 logits, loss = self.model(data.to(self.rank), target.to(self.rank))
                 preds = logits.argmax(-1)
@@ -153,6 +153,7 @@ class Trainer():
             x = torch.sum(target.to(self.rank) == preds).item()
             test_accuracies.append(x/len(preds))
             
+        self.model.train()
         return sum(test_accuracies)/len(test_accuracies)
 
 # def plot_graph(train_accuracies, test_accuracies):
